@@ -18,7 +18,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="pTq-Q6-TAl">
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="0 p." id="GZH-Q9-YuB"/>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" title="First Page" id="GZH-Q9-YuB"/>
                     </navigationItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
