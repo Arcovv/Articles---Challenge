@@ -60,14 +60,17 @@ class DetailViewController: UIViewController {
     // MARK: - View Life Cycle
     
     deinit {
+        
         webView.removeObserver(self, forKeyPath: "loading")
         pageLogic.removeObserver(self, forKeyPath: "currentPage")
         activity.stopAnimating()
+        print("\(String(self)) is deinit.")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         title = article.author
+        
         
         webViewSetUp()
         activityIndicatorViewSetUp()
@@ -76,16 +79,19 @@ class DetailViewController: UIViewController {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
+        
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        
     }
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         pageLogic = PageLogic(maxPageCount: getMaxPageCount())
         pageLogic.addObserver(self, forKeyPath: "currentPage", options: [.New], context: nil)
+        pageIndex.title = "1 / \(pageLogic.userShowMaxPageCount)"
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -111,18 +117,8 @@ class DetailViewController: UIViewController {
             }
             
         case "currentPage":
-            if let currentPage = change[NSKeyValueChangeNewKey] as? Int {
-                if currentPage == pageLogic.maxPageCount {
-                    pageIndex.title = "Last Page"
-                    return
-                }
-                if currentPage == 0 {
-                    pageIndex.title = "First Page"
-                    return
-                }
-                pageIndex.title = "\(currentPage) p."
-            }
-
+            pageIndex.title = "\(pageLogic.userShowPage) / \(pageLogic.userShowMaxPageCount)"
+            
         default:
             break
         }
@@ -187,27 +183,14 @@ extension DetailViewController {
                                    size: rectSize)
         
         if CGRectContainsPoint(leftPageRect, tapLocation) {
-            if pageLogic.canBackPage() {
-                pagingAnimation(.ToLeft)
-                do {
-                    try pageLogic.backPage()
-                } catch let error as PagingErrorType {
-                    print(error.descripe)
-                } catch {
-                    print(error)
-                }
+            pageLogic.backPage() {[weak self] page in
+                self?.pagingAnimation(page)
             }
-
+            
+            
         } else if CGRectContainsPoint(rightPageRect, tapLocation) {
-            if pageLogic.canNextPage() {
-                pagingAnimation(.ToRight)
-                do {
-                    try pageLogic.nextPage()
-                } catch let error as PagingErrorType {
-                    print(error.descripe)
-                } catch {
-                    print(error)
-                }
+            pageLogic.nextPage() { [weak self] page in
+                self?.pagingAnimation(page)
             }
             
         } else {
@@ -220,11 +203,10 @@ extension DetailViewController {
         return Int(webScrollView.contentSize.width / screenBounds.width) - 1
     }
     
-    func pagingAnimation(direction: PageDirection) {
-        let distance        = CGFloat(direction.rawValue) * screenBounds.width
-        let translateOffset = CGPoint(x: distance + webScrollView.contentOffset.x ,
+    func pagingAnimation(toPage: Int) {
+        let distance        = CGFloat(toPage) * screenBounds.width
+        let translateOffset = CGPoint(x: distance ,
                                       y: webScrollView.contentOffset.y)
-        
         webScrollView.setContentOffset(translateOffset, animated: true)
     }
 }
@@ -252,37 +234,22 @@ extension DetailViewController: UIScrollViewDelegate {
     }
     
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        print(#function)
         oldOffset = webScrollView.contentOffset
     }
     
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        let nowOffset = webScrollView.contentOffset
-        
-        let distance = nowOffset.x - oldOffset.x
-        
-        if abs(distance) == screenBounds.width {
-            if distance > 0 {
-                do {
-                    try pageLogic.nextPage()
-                } catch let error as PagingErrorType {
-                    print(error.descripe)
-                } catch {
-                    print(error)
-                }
-
-            } else if distance < 0 {
-                do {
-                    try pageLogic.backPage()
-                } catch let error as PagingErrorType {
-                    print(error.descripe)
-                } catch {
-                    print(error)
-                }
-            }
+    func scrollViewWillEndDragging(scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        print(#function)
+        if velocity.x > 0 {
+            pageLogic.nextPage(nil)
+        } else if velocity.x < 0 {
+            pageLogic.backPage(nil)
         }
+        print(pageLogic.currentPage)
     }
     
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
+        
         // This will happen when setContentOffset
     }
 }

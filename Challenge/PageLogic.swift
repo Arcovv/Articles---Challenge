@@ -22,24 +22,20 @@
 
 import Foundation
 
-enum PagingErrorType: ErrorType {
-    case NoMoreBackPage(currentPage: Int)
-    case NoMoreNextPage(maxPageCount: Int)
-    
-    var descripe: String {
-        switch self {
-        case .NoMoreBackPage(let currentPage):
-            return "There is no more page to back. The currentPage is \(currentPage)."
-        case .NoMoreNextPage(let maxPageCount):
-            return "There is no more page to back. The maxPageCount is \(maxPageCount)."
-        }
-    }
-}
+typealias HandlePage = (Int) -> ()
 
 class PageLogic: NSObject {
     
     var maxPageCount: Int, pagingCount: Int
     dynamic var currentPage: Int = 0
+    
+    var userShowPage: Int {
+        return currentPage + 1
+    }
+    
+    var userShowMaxPageCount: Int {
+        return maxPageCount + 1
+    }
     
     init(maxPageCount: Int, pagingCount: Int, currentPage: Int) {
         self.maxPageCount = maxPageCount
@@ -66,19 +62,21 @@ class PageLogic: NSObject {
         return false
     }
     
-    func nextPage() throws {
+    func nextPage(handle: HandlePage?) {
         if canNextPage() {
             currentPage += pagingCount
-            return
+            handle?(currentPage)
+        } else {
+            handle?(maxPageCount)
         }
-        throw PagingErrorType.NoMoreNextPage(maxPageCount: maxPageCount)
     }
     
-    func backPage() throws {
+    func backPage(handle: HandlePage?) {
         if canBackPage() {
             currentPage -= pagingCount
-            return
+            handle?(currentPage)
+        } else {
+            handle?(0)
         }
-        throw PagingErrorType.NoMoreBackPage(currentPage: currentPage)
     }
 }

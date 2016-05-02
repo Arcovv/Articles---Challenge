@@ -25,7 +25,7 @@ import UIKit
 
 private let detailSegueIdentifier = "ShowDetail"
 private let cellIdentifier        = "Cell"
-private let articleCellIdentifier       = String(ArticleCell)
+private let articleCellIdentifier = String(ArticleCell)
 
 class ArticlesViewController: UITableViewController {
     

@@ -50,10 +50,10 @@ Then, using `loadHTMLString(_, baseURL: _)` and enjoy!
 
 * Care about UIScrollView in WkWebView and delegate UIScrollViewDelegate by `self`. You also must set `delegate = nil` when you out of the view controller, or you will get crash every time. 
 * Use your Logic and add more gestures in scrollView. I implement when use tapping in 20% width left or right rect, the article will *paging*. Be care and should implement one `UIGestureRecognizerDelegate`. See more at line 222.
-* I use a `PageLogic` class to help me calculate the page index in every article. And use ErrorType to throw and catch error. I also use singleton pattern and it's really interested.
+* I use a `PageLogic` class to help me calculate the page index in every article. And use ErrorType to throw and catch error. I also use singleton pattern and it's really interesting.
 * KVO is really useful and I use it to observe the file loading status and what is the current page. Not to forget remove them in deinit.
 
-This challenge gave me a revelation, which reminded me I should read and practice more iOS Fundation frameworks. It alse notice me I shoulf learn more programming languages.
+This challenge gave me a revelation, which reminded me I should read and practice more iOS Fundation frameworks. It alse notice me I should learn more programming languages.
 
 ### **A long and long road, but a Passionate and Challenging future.**
 
