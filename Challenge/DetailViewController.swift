@@ -25,7 +25,7 @@ import WebKit
 
 private let leftProportionRect  = CGFloat(0.2)
 private let rightProportionRect = CGFloat(1 - leftProportionRect)
-private let marginLength = CGFloat(20)
+
 
 enum PageDirection: Int {
 	case ToLeft = -1
@@ -146,7 +146,7 @@ extension DetailViewController {
 		
 		webView.translatesAutoresizingMaskIntoConstraints = false
 		NSLayoutConstraint.activateConstraints([
-			NSLayoutConstraint.constraintsWithVisualFormat("H:|-20-[webView]-20-|", options: [], metrics: nil, views: ["webView": webView]),
+			NSLayoutConstraint.constraintsWithVisualFormat("H:|[webView]|", options: [], metrics: nil, views: ["webView": webView]),
 			NSLayoutConstraint.constraintsWithVisualFormat("V:|-64-[webView]|", options: [], metrics: nil, views: ["webView": webView])].flatten().map{$0})
 		
 		tapGestureSetUp()
@@ -204,7 +204,7 @@ extension DetailViewController {
 	}
 	
 	func pagingAnimation(toPage: Int) {
-		let distance        = CGFloat(toPage) * (screenBounds.width - marginLength * 2)
+		let distance        = CGFloat(toPage) * (screenBounds.width)
 		let translateOffset = CGPoint(x: distance ,
 		                              y: webScrollView.contentOffset.y)
 		webScrollView.setContentOffset(translateOffset, animated: true)
@@ -285,7 +285,7 @@ extension DetailViewController {
 		let path = Articles.single().getPath(article)
 		let loadHTMLString = try! String(contentsOfFile: path, encoding: NSUTF8StringEncoding)
 		
-		let width = screenBounds.width - marginLength * 2
+		let width = screenBounds.width
 		let height = screenBounds.height - 64
 		
 		var html = "<html>"
